@@ -65,10 +65,12 @@ namespace dirt
         {
             float dist = 0;
 
-            dist += MathF.Sqrt(MathF.Pow(v1.x - v2.x, 2));
-            dist += MathF.Sqrt(MathF.Pow(v1.y - v2.y, 2));
-            dist += MathF.Sqrt(MathF.Pow(v1.z - v2.z, 2));
-            dist += MathF.Sqrt(MathF.Pow(v1.w - v2.w, 2));
+            dist += MathF.Pow(v1.x - v2.x, 2);
+            dist += MathF.Pow(v1.y - v2.y, 2);
+            dist += MathF.Pow(v1.z - v2.z, 2);
+            dist += MathF.Pow(v1.w - v2.w, 2);
+
+            dist = MathF.Sqrt(dist);
 
             return dist;
         }
