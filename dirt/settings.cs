@@ -12,7 +12,7 @@ namespace dirt
         public static float fov = (float)(Math.PI / 2);
         public static float zFar = 1000;
         public static float zNear = 0.01f;
-        public static float scale = 10;
+        public static float scale = 40;
 
         public static float fYaw = 0;
 

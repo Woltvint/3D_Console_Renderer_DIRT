@@ -18,16 +18,19 @@ namespace dirt
 
 			res = depth(res);
 
+			res = res * settings.scale;
+			res = res + new vector(settings.offX, settings.offY, settings.offZ);
+
 			return res;
 		}
 
 		public static vector depth(vector v)
 		{
-			if (v.z > 0)
+			if (v.z + 15 > 0)
 			{
-				v.x = v.x / ((v.z) * 0.15f);
+				v.x = v.x / ((v.z + 10) * 0.15f);
 
-				v.y = v.y / ((v.z) * 0.15f);
+				v.y = v.y / ((v.z + 10) * 0.15f);
 			}
 			else
 			{

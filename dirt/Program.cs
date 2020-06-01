@@ -15,8 +15,10 @@ namespace dirt
         public static float ry = 0f;
         public static float rz = 0f;
 
-        public static int[,,] screen;
-        public static int[,,] oldScreen;
+        public static pixel[,] screen;
+        public static pixel[,] oldScreen;
+
+        public static List<Cube> cubes = new List<Cube>();
 
         static ConsoleToColor ctc = new ConsoleToColor();
 
@@ -25,61 +27,96 @@ namespace dirt
             Console.ReadLine();
             Console.BackgroundColor = ConsoleColor.Black;
 
-            vector s = new vector(10, 10);
-            vector e = new vector(20, 20);
+            cubes.Add(new Cube(new vector(-0.5f,-0.5f,-0.5f), Color.White));
 
-            vector a = new vector(10, 15);
+            settings.width = Console.WindowWidth;
+            settings.height = Console.WindowHeight;
+            settings.offX = settings.width / 2;
+            settings.offY = settings.height / 2;
 
-            vector b = new vector(10, 10);
-
-            vector c = new vector(20, 15);
-
-            vector d = new vector(20, 20);
-
-            float area = triangleArea(a, b, c) + triangleArea(a, c, d);
-
-            Console.ForegroundColor = ConsoleColor.White;
-
-            for (int x = (int)s.x; x <= (int)e.x; x++)
+            oldScreen = new pixel[settings.width, settings.height];
+            for (int x = 0; x < oldScreen.GetLength(0); x++)
             {
-                for (int y = (int)s.y; y <= (int)e.y; y++)
+                for (int y = 0; y < oldScreen.GetLength(1); y++)
                 {
-                    vector p = new vector(x, y);
-                    float ar = triangleArea(a,p,d) + triangleArea(d,p,c) + triangleArea(c,p,b) + triangleArea(p,b,a);
-
-                    Console.SetCursorPosition(x, y);
-
-                    if (ar <= area + 0.1f)
-                    {
-                        Console.SetCursorPosition(x, y);
-                        Console.Write('#');
-                    }
-                    
+                    oldScreen[x, y] = new pixel(-1000, Color.Black);
+                    oldScreen[x, y].z = -1000;
                 }
             }
 
-            /*
+            Console.WriteLine("starting...");
+
+            
+
             //render loop
             while (true)
             {
+                screen = new pixel[settings.width, settings.height];
+                for (int x = 0; x < screen.GetLength(0); x++)
+                {
+                    for (int y = 0; y < screen.GetLength(1); y++)
+                    {
+                        screen[x, y] = new pixel(-1000,Color.Black);
+                        screen[x, y].z = -1000;
+                    }
+                }
 
+                foreach (Cube c in cubes)
+                {
+                    c.renderCube();
+                }
 
+                draw();
 
-            }*/
+                oldScreen = screen;
+                
+
+                rx += 0.005f;
+                ry -= 0.002f;
+                rz += 0.001f;
+
+                //Console.WriteLine("tick");
+            }
 
         }
 
-        public static float triangleArea(vector A, vector B, vector C)
+
+        public static void draw()
         {
-            float a = vector.dist(C, B);
-            float b = vector.dist(A, C);
-            float c = vector.dist(A, B);
+            for (int x = 0; x < screen.GetLength(0); x++)
+            {
+                for (int y = 0; y < screen.GetLength(1); y++)
+                {
+                    if (screen[x,y] == null)
+                    {
+                        continue;
+                    }
 
-            float s = (a + b + c) / 2f;
-
-            return MathF.Sqrt(s * (s - a) * (s - b) * (s - c));
+                    if (screen[x,y].c != oldScreen[x,y].c)
+                    {
+                        Console.SetCursorPosition(x, y);
+                        ctc.setColor(screen[x,y].c);
+                        Console.Write('░');
+                    }
+                }
+            }
         }
 
+        
 
+        public static void setPixel(int x, int y, pixel p)
+        {
+            if (x >= 0 && x < settings.width)
+            {
+                if (y >= 0 && y < settings.height)
+                {
+                    /*if (screen[x,y].z < p.z)
+                    {*/
+                        screen[x, y].c = p.c;
+                        screen[x, y].z = p.z;
+                    //}
+                }
+            }
+        }
     }
 }

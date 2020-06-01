@@ -18,8 +18,6 @@ namespace dirt
             p = _p;
             c = _c;
 
-
-
             sides[0] = new Side(new vector[] {
                 new vector(p.x, p.y, p.z), 
                 new vector(p.x + 1, p.y, p.z), 
@@ -58,6 +56,14 @@ namespace dirt
             }, c, vector.down);
 
 
+        }
+
+        public void renderCube()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                sides[i].renderSide();
+            }
         }
 
 
