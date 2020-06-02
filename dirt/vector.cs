@@ -84,9 +84,9 @@ namespace dirt
             return v;
         }
 
-        public float dot(vector v)
+        public static float dot(vector v1,vector v2)
         {
-            return (v.x * x) + (v.y * y) + (v.z * z) + (v.w * w);
+            return (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z) + (v1.w * v2.w);
         }
 
 

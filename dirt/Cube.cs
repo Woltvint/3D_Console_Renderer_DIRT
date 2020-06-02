@@ -66,6 +66,33 @@ namespace dirt
             }
         }
 
+        public Cube checkSides(List<Cube> cubes)
+        {
+            Cube cb = this;
+
+            for (int i = 0; i < cubes.Count; i++)
+            {
+                if (cubes[i] == this)
+                {
+                    continue;
+                }
+
+
+                for (int a = 0; a < 6; a++)
+                {
+                    for (int s = 0; s < 6; s++)
+                    {
+                        if (cubes[i].sides[s].same(sides[a].center()))
+                        {
+                            cb.sides[a].visible = false;
+                        }
+                    }
+                }
+            }
+
+            return cb;
+        }
+
 
     }
 }

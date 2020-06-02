@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.IO;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace dirt
 {
@@ -24,10 +28,22 @@ namespace dirt
 
         static void Main(string[] args)
         {
+            Console.Title = "dirt";
+
             Console.ReadLine();
             Console.BackgroundColor = ConsoleColor.Black;
 
-            cubes.Add(new Cube(new vector(-0.5f,-0.5f,-0.5f), Color.White));
+            /*
+            cubes.Add(new Cube(new vector(-0.5f, -0.5f, -2.5f), Color.Brown));
+            cubes.Add(new Cube(new vector(-0.5f, -0.5f, -1.5f), Color.Red));
+            cubes.Add(new Cube(new vector(-0.5f, -0.5f, -0.5f), Color.White));
+            cubes.Add(new Cube(new vector(-0.5f, -0.5f, 0.5f), Color.Yellow));
+            cubes.Add(new Cube(new vector(-0.5f, -0.5f, 1.5f), Color.Blue));*/
+
+
+            cubes = loadFromImage("knight.png");
+            //cubes = loadFromImage("teapot.png");
+            //cubes = loadFromImage("castle.png");
 
             settings.width = Console.WindowWidth;
             settings.height = Console.WindowHeight;
@@ -40,9 +56,19 @@ namespace dirt
                 for (int y = 0; y < oldScreen.GetLength(1); y++)
                 {
                     oldScreen[x, y] = new pixel(-1000, Color.Black);
-                    oldScreen[x, y].z = -1000;
                 }
             }
+
+            List<Cube> tmp = new List<Cube>();
+
+            Console.Title = "checking sides";
+
+            for (int i = 0; i < cubes.Count; i++)
+            {
+                tmp.Add(cubes[i].checkSides(cubes));
+            }
+
+            cubes = tmp;
 
             Console.WriteLine("starting...");
 
@@ -71,9 +97,9 @@ namespace dirt
                 oldScreen = screen;
                 
 
-                rx += 0.005f;
-                ry -= 0.002f;
-                rz += 0.001f;
+                //rx += 0.005f;
+                ry -= 0.005f;
+                //rz += 0.001f;
 
                 //Console.WriteLine("tick");
             }
@@ -83,6 +109,8 @@ namespace dirt
 
         public static void draw()
         {
+            Console.CursorVisible = false;
+
             for (int x = 0; x < screen.GetLength(0); x++)
             {
                 for (int y = 0; y < screen.GetLength(1); y++)
@@ -91,11 +119,11 @@ namespace dirt
                     {
                         continue;
                     }
-
+                    
                     if (screen[x,y].c != oldScreen[x,y].c)
                     {
+                        ctc.setColor(screen[x, y].c);
                         Console.SetCursorPosition(x, y);
-                        ctc.setColor(screen[x,y].c);
                         Console.Write('░');
                     }
                 }
@@ -110,13 +138,38 @@ namespace dirt
             {
                 if (y >= 0 && y < settings.height)
                 {
-                    /*if (screen[x,y].z < p.z)
-                    {*/
+                    if (screen[x,y].z < p.z)
+                    {
                         screen[x, y].c = p.c;
                         screen[x, y].z = p.z;
-                    //}
+                    }
                 }
             }
+        }
+
+        static List<Cube> loadFromImage(string fileName)
+        {
+            List<Cube> cub = new List<Cube>();
+
+            Bitmap img = (Bitmap)Bitmap.FromFile(fileName);
+
+            float off = -(img.Width / 2f) - 0.5f;
+
+            for (int y = 0; y < img.Height; y += img.Width)
+            {
+                for (int x = 0; x < img.Width; x++)
+                {
+                    for (int z = 0; z < img.Width; z++)
+                    {
+                        if (img.GetPixel(x, z + y).A > 0)
+                        {
+                            cub.Add(new Cube(new vector(x + off, (y / img.Width) - ((img.Height / img.Width) / 2), z + off), img.GetPixel(x, z + y)));
+                        }
+                    }
+                }
+            }
+
+            return cub;
         }
     }
 }

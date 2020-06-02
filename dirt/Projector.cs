@@ -26,11 +26,11 @@ namespace dirt
 
 		public static vector depth(vector v)
 		{
-			if (v.z + 15 > 0)
+			if (v.z + 40 > 0)
 			{
-				v.x = v.x / ((v.z + 10) * 0.15f);
+				v.x = v.x * ((v.z + 20) * 0.15f);
 
-				v.y = v.y / ((v.z + 10) * 0.15f);
+				v.y = v.y * ((v.z + 20) * 0.15f);
 			}
 			else
 			{
@@ -152,7 +152,7 @@ namespace dirt
 			newForward = newForward.normalize();
 
 			// Calculate new Up direction
-			vector a = newForward * up.dot(newForward);
+			vector a = newForward * vector.dot(newForward,up);
 			vector newUp = up - a;
 			newUp = newUp.normalize();
 
