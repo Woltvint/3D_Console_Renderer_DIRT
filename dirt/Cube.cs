@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace dirt
 {
@@ -19,9 +20,9 @@ namespace dirt
             c = _c;
 
             sides[0] = new Side(new vector[] {
-                new vector(p.x, p.y, p.z), 
-                new vector(p.x + 1, p.y, p.z), 
-                new vector(p.x, p.y + 1, p.z), 
+                new vector(p.x, p.y, p.z),
+                new vector(p.x + 1, p.y, p.z),
+                new vector(p.x, p.y + 1, p.z),
                 new vector(p.x + 1, p.y + 1, p.z)
             }, c, vector.front);
             sides[1] = new Side(new vector[] {

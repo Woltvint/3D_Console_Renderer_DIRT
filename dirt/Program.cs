@@ -26,22 +26,22 @@ namespace dirt
 
         static ConsoleToColor ctc = new ConsoleToColor();
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.Title = "dirt";
 
             Console.ReadLine();
             Console.BackgroundColor = ConsoleColor.Black;
 
-            /*
+            
             cubes.Add(new Cube(new vector(-0.5f, -0.5f, -2.5f), Color.Brown));
             cubes.Add(new Cube(new vector(-0.5f, -0.5f, -1.5f), Color.Red));
             cubes.Add(new Cube(new vector(-0.5f, -0.5f, -0.5f), Color.White));
             cubes.Add(new Cube(new vector(-0.5f, -0.5f, 0.5f), Color.Yellow));
-            cubes.Add(new Cube(new vector(-0.5f, -0.5f, 1.5f), Color.Blue));*/
+            cubes.Add(new Cube(new vector(-0.5f, -0.5f, 1.5f), Color.Blue));
 
-
-            cubes = loadFromImage("knight.png");
+            //cubes = loadFromImage("house.png");
+            //cubes = loadFromImage("knight.png");
             //cubes = loadFromImage("teapot.png");
             //cubes = loadFromImage("castle.png");
 
@@ -63,10 +63,19 @@ namespace dirt
 
             Console.Title = "checking sides";
 
+            //Task[] checkTasks = new Task[cubes.Count - 1];
+
             for (int i = 0; i < cubes.Count; i++)
             {
                 tmp.Add(cubes[i].checkSides(cubes));
+                //checkTasks[i] = Task.Run(() => tmp.Add(cubes[i].checkSides(cubes)));
+                if (i % 100 == 0)
+                {
+                    Console.Title = "checking sides (" + i + "/"+ cubes.Count + ")";
+                }
             }
+
+            //await Task.WhenAll(checkTasks);
 
             cubes = tmp;
 
@@ -87,9 +96,19 @@ namespace dirt
                     }
                 }
 
-                foreach (Cube c in cubes)
+                /*
+                Task[] tasks = new Task[cubes.Count-1];
+
+                for (int i = 0; i < cubes.Count-1; i++)
                 {
-                    c.renderCube();
+                    tasks[i] = Task.Run(() => cubes[i].renderCube());
+                }
+
+                await Task.WhenAll(tasks);*/
+
+                for (int i = 0; i < cubes.Count; i++)
+                {
+                    cubes[i].renderCube();
                 }
 
                 draw();
@@ -124,13 +143,13 @@ namespace dirt
                     {
                         ctc.setColor(screen[x, y].c);
                         Console.SetCursorPosition(x, y);
-                        Console.Write('░');
+                        Console.Write('▒');
                     }
                 }
             }
         }
 
-        
+        private static readonly object screenLock = new object();
 
         public static void setPixel(int x, int y, pixel p)
         {
@@ -138,11 +157,21 @@ namespace dirt
             {
                 if (y >= 0 && y < settings.height)
                 {
-                    if (screen[x,y].z < p.z)
+                    while (true)
                     {
-                        screen[x, y].c = p.c;
-                        screen[x, y].z = p.z;
+                        lock (screenLock)
+                        {
+                            if (screen[x, y].z < p.z)
+                            {
+                                screen[x, y].c = p.c;
+                                screen[x, y].z = p.z;
+                            }
+                            break;
+                        }
                     }
+                    
+                    
+
                 }
             }
         }
@@ -168,6 +197,8 @@ namespace dirt
                     }
                 }
             }
+
+            settings.offZ = -off;
 
             return cub;
         }

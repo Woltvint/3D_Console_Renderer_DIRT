@@ -18,6 +18,7 @@ namespace dirt
 
 			res = depth(res);
 
+			
 			res = res * settings.scale;
 			res = res + new vector(settings.offX, settings.offY, settings.offZ);
 
@@ -34,7 +35,7 @@ namespace dirt
 			}
 			else
 			{
-				v.z = -1000;
+				v.z = -1002;
 			}
 			return v;
 		}
